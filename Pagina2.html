@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sopa de Letras ❤️</title>
+<style>
+  body{
+    font-family: Arial, sans-serif;
+    background:#fff0f5;
+    text-align:center;
+    margin:0;
+    padding:20px;
+  }
+  h1{ color:#d6336c; margin-bottom:10px; }
+  #grid{
+    display:grid;
+    grid-template-columns:repeat(17,36px);
+    gap:2px;
+    justify-content:center;
+    margin:20px auto;
+    user-select:none;
+  }
+  .cell{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid #b9b8b8;
+    font-weight:bold;
+    cursor:pointer;
+    transition:background .2s,color .2s;
+    background:#fff;
+  }
+  .found{ background:#ffccd5; color:#d6336c; }
+  #palabras{ margin:10px auto; width:fit-content; text-align:left; }
+  #clave{ font-size:18px; margin:10px; color:#333; }
+  #btnSiguiente{
+    padding:12px 25px;
+    font-size:18px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Encuentra todas las palabras ❤️</h1>
+
+<div id="grid"></div>
+
+<div id="palabras">
+  <h3>Palabras a encontrar:</h3>
+  <ol id="lista"></ol>
+</div>
+
+<div id="clave">Clave: <span id="letras"></span></div>
+
+<button id="btnSiguiente" onclick="window.location.href='Pagina3.html'">Ir a la sorpresa</button>
+
+<script>
+const size = 17;
+const palabras = [
+  {texto:"AMOR",       letraClave:"T"},
+  {texto:"BESO",       letraClave:"E"},
+  {texto:"CARIÑO",     letraClave:"Q"},
+  {texto:"ABRAZO",     letraClave:"U"},
+  {texto:"SONRISA",    letraClave:"I"},
+  {texto:"ALEGRIA",    letraClave:"E"},
+  {texto:"TIERNA",     letraClave:"R"},
+  {texto:"DULZURA",    letraClave:"O"},
+  {texto:"LUCERO",     letraClave:"M"},
+  {texto:"CORAZON",    letraClave:"O"},
+  {texto:"BONITA",     letraClave:"R"}
+];
+const fraseObjetivo = "TE QUIERO MOR";
+
+const grid = document.getElementById("grid");
+const letrasABC = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+const celdas = [];
+for(let i=0; i<size*size; i++){
+  const cell = document.createElement("div");
+  cell.className = "cell";
+  cell.textContent = letrasABC[Math.floor(Math.random()*letrasABC.length)];
+  grid.appendChild(cell);
+  celdas.push(cell);
+}
+function index(r,c){ return r*size + c; }
+
+// ===== NUEVA FUNCIÓN: insertar palabra evitando colisiones =====
+function colocarPalabra(pal){
+  let colocado = false;
+  let intentos = 0;
+  while(!colocado && intentos < 500){
+    intentos++;
+    const horizontal = Math.random() > 0.5;
+    let row, col;
+    if(horizontal){
+      row = Math.floor(Math.random()*size);
+      col = Math.floor(Math.random()*(size - pal.length));
+      // comprobar hueco
+      let libre = true;
+      for(let i=0;i<pal.length;i++){
+        const pos = index(row,col+i);
+        const letraActual = celdas[pos].textContent;
+        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) {
+          libre = false; break;
+        }
+        if(letraActual !== pal[i] && celdas[pos].dataset.palabra) { libre = false; break; }
+      }
+      if(libre){
+        for(let i=0;i<pal.length;i++){
+          const pos = index(row,col+i);
+          celdas[pos].textContent = pal[i];
+          celdas[pos].dataset.palabra = pal;
+        }
+        colocado = true;
+      }
+    } else {
+      row = Math.floor(Math.random()*(size - pal.length));
+      col = Math.floor(Math.random()*size);
+      let libre = true;
+      for(let i=0;i<pal.length;i++){
+        const pos = index(row+i,col);
+        const letraActual = celdas[pos].textContent;
+        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) {
+          libre = false; break;
+        }
+        if(letraActual !== pal[i] && celdas[pos].dataset.palabra) { libre = false; break; }
+      }
+      if(libre){
+        for(let i=0;i<pal.length;i++){
+          const pos = index(row+i,col);
+          celdas[pos].textContent = pal[i];
+          celdas[pos].dataset.palabra = pal;
+        }
+        colocado = true;
+      }
+    }
+  }
+}
+
+// ===== Insertar todas las palabras con control de colisión =====
+palabras.forEach(p=> colocarPalabra(p.texto));
+
+// Lista visual
+const lista = document.getElementById("lista");
+palabras.forEach((p,i)=>{
+  const li = document.createElement("li");
+  li.textContent = `${i+1}. ${p.texto}`;
+  lista.appendChild(li);
+});
+
+// ===== Interacción =====
+const letrasClave = [];
+celdas.forEach(cell=>{
+  cell.addEventListener("click",()=>{
+    if(cell.dataset.palabra && !cell.classList.contains("found")){
+      cell.classList.add("found");
+      const palabra = cell.dataset.palabra;
+      const completa = [...grid.querySelectorAll(`[data-palabra='${palabra}']`)]
+                       .every(c=>c.classList.contains("found"));
+      if(completa){
+        const obj = palabras.find(p=>p.texto === palabra);
+        if(obj && !letrasClave.includes(obj.letraClave)){
+          letrasClave.push(obj.letraClave);
+          document.getElementById("letras").textContent = letrasClave.join("");
+        }
+        if(letrasClave.length === palabras.length){
+          document.getElementById("btnSiguiente").style.display = "inline-block";
+          document.getElementById("letras").textContent = fraseObjetivo;
+        }
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>
