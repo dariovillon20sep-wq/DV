@@ -31,7 +31,6 @@
   }
   .found{ background:#ffccd5; color:#d6336c; }
   #palabras{ margin:10px auto; width:fit-content; text-align:left; }
-  #clave{ font-size:18px; margin:10px; color:#333; }
   #btnSiguiente{
     padding:12px 25px;
     font-size:18px;
@@ -55,30 +54,29 @@
   <ol id="lista"></ol>
 </div>
 
-<div id="clave">Clave: <span id="letras"></span></div>
-
 <button id="btnSiguiente" onclick="window.location.href='Pagina3.html'">Ir a la sorpresa</button>
 
 <script>
 const size = 17;
 const palabras = [
-  {texto:"AMOR",       letraClave:"T"},
-  {texto:"BESO",       letraClave:"E"},
-  {texto:"CARIÑO",     letraClave:"Q"},
-  {texto:"ABRAZO",     letraClave:"U"},
-  {texto:"SONRISA",    letraClave:"I"},
-  {texto:"ALEGRIA",    letraClave:"E"},
-  {texto:"TIERNA",     letraClave:"R"},
-  {texto:"DULZURA",    letraClave:"O"},
-  {texto:"LUCERO",     letraClave:"M"},
-  {texto:"CORAZON",    letraClave:"O"},
-  {texto:"BONITA",     letraClave:"R"}
+  {texto:"AMOR"},
+  {texto:"BESO"},
+  {texto:"CARIÑO"},
+  {texto:"ABRAZO"},
+  {texto:"SONRISA"},
+  {texto:"ALEGRIA"},
+  {texto:"TIERNA"},
+  {texto:"DULZURA"},
+  {texto:"LUCERO"},
+  {texto:"CORAZON"},
+  {texto:"BONITA"}
 ];
-const fraseObjetivo = "TE QUIERO MOR";
 
 const grid = document.getElementById("grid");
 const letrasABC = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
 const celdas = [];
+
+// Crear tablero con letras aleatorias
 for(let i=0; i<size*size; i++){
   const cell = document.createElement("div");
   cell.className = "cell";
@@ -88,7 +86,7 @@ for(let i=0; i<size*size; i++){
 }
 function index(r,c){ return r*size + c; }
 
-// ===== NUEVA FUNCIÓN: insertar palabra evitando colisiones =====
+// ===== Colocar palabra evitando colisiones =====
 function colocarPalabra(pal){
   let colocado = false;
   let intentos = 0;
@@ -99,14 +97,11 @@ function colocarPalabra(pal){
     if(horizontal){
       row = Math.floor(Math.random()*size);
       col = Math.floor(Math.random()*(size - pal.length));
-      // comprobar hueco
       let libre = true;
       for(let i=0;i<pal.length;i++){
         const pos = index(row,col+i);
         const letraActual = celdas[pos].textContent;
-        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) {
-          libre = false; break;
-        }
+        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) { libre = false; break; }
         if(letraActual !== pal[i] && celdas[pos].dataset.palabra) { libre = false; break; }
       }
       if(libre){
@@ -124,9 +119,7 @@ function colocarPalabra(pal){
       for(let i=0;i<pal.length;i++){
         const pos = index(row+i,col);
         const letraActual = celdas[pos].textContent;
-        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) {
-          libre = false; break;
-        }
+        if(celdas[pos].dataset.palabra && celdas[pos].dataset.palabra !== pal) { libre = false; break; }
         if(letraActual !== pal[i] && celdas[pos].dataset.palabra) { libre = false; break; }
       }
       if(libre){
@@ -141,10 +134,10 @@ function colocarPalabra(pal){
   }
 }
 
-// ===== Insertar todas las palabras con control de colisión =====
+// Colocar todas las palabras
 palabras.forEach(p=> colocarPalabra(p.texto));
 
-// Lista visual
+// Mostrar lista
 const lista = document.getElementById("lista");
 palabras.forEach((p,i)=>{
   const li = document.createElement("li");
@@ -153,7 +146,7 @@ palabras.forEach((p,i)=>{
 });
 
 // ===== Interacción =====
-const letrasClave = [];
+const encontradas = new Set();
 celdas.forEach(cell=>{
   cell.addEventListener("click",()=>{
     if(cell.dataset.palabra && !cell.classList.contains("found")){
@@ -161,15 +154,11 @@ celdas.forEach(cell=>{
       const palabra = cell.dataset.palabra;
       const completa = [...grid.querySelectorAll(`[data-palabra='${palabra}']`)]
                        .every(c=>c.classList.contains("found"));
-      if(completa){
-        const obj = palabras.find(p=>p.texto === palabra);
-        if(obj && !letrasClave.includes(obj.letraClave)){
-          letrasClave.push(obj.letraClave);
-          document.getElementById("letras").textContent = letrasClave.join("");
-        }
-        if(letrasClave.length === palabras.length){
+      if(completa && !encontradas.has(palabra)){
+        encontradas.add(palabra);
+        if(encontradas.size === palabras.length){
+          alert("¡Felicidades mor por completar el juego ❤️!");
           document.getElementById("btnSiguiente").style.display = "inline-block";
-          document.getElementById("letras").textContent = fraseObjetivo;
         }
       }
     }
@@ -178,3 +167,4 @@ celdas.forEach(cell=>{
 </script>
 </body>
 </html>
+

@@ -1,52 +1,78 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Para mi niña ❤️</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background: #ffe6e6;
-    }
+<meta charset="UTF-8">
+<title>Para mi niña ❤️</title>
+<style>
+  :root{
+    --rosa:#ff4d6d;
+    --rosa-dark:#d6336c;
+    --fondo1:#ffe6e6;
+    --fondo2:#fff0f5;
+  }
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    font-family:"Comic Sans MS", "Poppins", Arial, sans-serif;
+    background: radial-gradient(circle at 50% 30%, var(--fondo2), var(--fondo1));
+    animation: fadeIn 1s ease-in;
+  }
+  h1{
+    margin:8px 0;
+    font-size:2rem;
+    color:var(--rosa-dark);
+    text-shadow:0 2px 6px rgba(0,0,0,0.15);
+    animation: slideDown .8s ease forwards;
+  }
+  button{
+    margin-top:30px;
+    padding:14px 38px;
+    font-size:1.2rem;
+    font-weight:600;
+    background:var(--rosa);
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, background 0.3s ease;
+  }
+  button:hover{
+    background:var(--rosa-dark);
+    transform:scale(1.05);
+  }
+  button:active{
+    transform:scale(.97);
+  }
 
-    h1 {
-      margin-bottom: 40px;
-      color: #d6336c;
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background: #ff4d6d;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #ff1e4d;
-    }
-  </style>
+  /* Animaciones */
+  @keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+  }
+  @keyframes slideDown{
+    from{transform:translateY(-15px);opacity:0;}
+    to{transform:translateY(0);opacity:1;}
+  }
+</style>
 </head>
 <body>
 
-  <h1>Hola Mor❤️</h1>
-  <h1>Bienvenida a este Minijuego hecho para ti ❤️</h1>
+  <h1>Hola, mor ❤️</h1>
+  <h1>Bienvenida a este minijuego hecho para ti ❤️</h1>
+
   <button onclick="irAPagina1()">Haz clic aquí</button>
 
   <script>
-    function irAPagina1() {
-        window.location.href = "Pagina2.html";
+    function irAPagina1(){
+      window.location.href="Pagina2.html";
     }
-</script>
+  </script>
 
 </body>
 </html>
+
