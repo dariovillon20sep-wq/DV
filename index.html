@@ -1,78 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Para mi niña ❤️</title>
-<style>
-  :root{
-    --rosa:#ff4d6d;
-    --rosa-dark:#d6336c;
-    --fondo1:#ffe6e6;
-    --fondo2:#fff0f5;
-  }
-  body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    font-family:"Comic Sans MS", "Poppins", Arial, sans-serif;
-    background: radial-gradient(circle at 50% 30%, var(--fondo2), var(--fondo1));
-    animation: fadeIn 1s ease-in;
-  }
-  h1{
-    margin:8px 0;
-    font-size:2rem;
-    color:var(--rosa-dark);
-    text-shadow:0 2px 6px rgba(0,0,0,0.15);
-    animation: slideDown .8s ease forwards;
-  }
-  button{
-    margin-top:30px;
-    padding:14px 38px;
-    font-size:1.2rem;
-    font-weight:600;
-    background:var(--rosa);
-    color:#fff;
-    border:none;
-    border-radius:999px;
-    cursor:pointer;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-    transition: transform 0.15s ease, background 0.3s ease;
-  }
-  button:hover{
-    background:var(--rosa-dark);
-    transform:scale(1.05);
-  }
-  button:active{
-    transform:scale(.97);
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sorpresa</title>
+  <style>
+    :root{
+      --bg1: #fff7e6;
+      --bg2: #fff0d6;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));font-family:Inter, system-ui, Arial, sans-serif;overflow:hidden}
 
-  /* Animaciones */
-  @keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
-  }
-  @keyframes slideDown{
-    from{transform:translateY(-15px);opacity:0;}
-    to{transform:translateY(0);opacity:1;}
-  }
-</style>
+    /* BANNER (botón) */
+    .card{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);padding:28px;border-radius:18px;box-shadow:0 18px 40px rgba(10,10,20,0.12);text-align:center
+    }
+    .title{font-size:18px;margin:0 0 8px 0;color:#263238}
+    .sub{font-size:13px;color:#566;opacity:.85;margin:0 0 16px 0}
+    .btn{
+      appearance:none;border:0;padding:14px 28px;border-radius:999px;background:linear-gradient(180deg,#ffd54a,#f2b300);font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(242,179,0,0.18), inset 0 -6px 12px rgba(0,0,0,0.06);font-size:16px
+    }
+    .btn:active{transform:translateY(2px)}
+
+    /* contenedor global de flores */
+    .garden{position:fixed;inset:0;overflow:hidden;z-index:5}
+
+    /* cada flor (envoltura absoluta) */
+    .flower-wrap{
+      position:absolute;left:0;top:0;transform:translate(-50%,0) scale(.6);opacity:0;will-change:transform,opacity;transition:transform 800ms cubic-bezier(.2,.9,.3,1),opacity 800ms ease;
+    }
+    .flower-wrap.bloom{opacity:1;transform:translate(-50%,0) scale(var(--s,1));}
+
+    /* el SVG tiene la animación de balanceo (sway) para parecer vivo */
+    .flower-svg{display:block;transform-origin:50% 95%;will-change:transform;animation: sway 4s ease-in-out infinite;}
+
+    @keyframes sway{
+      0%{transform: rotate(-4deg)}
+      50%{transform: rotate(4deg)}
+      100%{transform: rotate(-4deg)}
+    }
+
+    /* variante de sombra para que no se vea plano */
+    .flower-svg .petal{filter:drop-shadow(0 6px 8px rgba(0,0,0,0.09));}
+    .flower-svg .center{filter:drop-shadow(0 6px 12px rgba(0,0,0,0.10));}
+    .flower-svg .leaf{opacity:0.95}
+
+    /* mensaje final (oculto por defecto) */
+    .message{
+      position:fixed;
+      left:50%;
+      top:38%;
+      transform:translate(-50%, -10%) scale(.96);
+      z-index:70;
+      pointer-events:none;
+      opacity:0;
+      background:linear-gradient(90deg, rgba(255,214,102,0.95), rgba(255,245,200,0.88));
+      color:#2b2b2b;
+      padding:14px 22px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:clamp(20px,4vw,42px);
+      box-shadow:0 18px 40px rgba(10,10,30,0.18);
+      text-align:center;
+      transition:opacity 700ms ease, transform 700ms cubic-bezier(.2,.9,.3,1);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .message.show{opacity:1;transform:translate(-50%,0) scale(1)}
+    .message.pulse{animation: pulse 1.2s ease-in-out infinite}
+    @keyframes pulse{0%{transform:translate(-50%,0) scale(1)}50%{transform:translate(-50%,0) scale(1.035)}100%{transform:translate(-50%,0) scale(1)}}
+
+    /* responsive */
+    @media (max-width:520px){.message{top:34%;font-size:clamp(18px,6vw,30px);padding:12px 16px}}
+
+  </style>
 </head>
 <body>
 
-  <h1>Hola, mor ❤️</h1>
-  <h1>Bienvenida a este minijuego hecho para ti ❤️</h1>
+  <div class="card" id="banner">
+    <h2 class="title">Haz click y mira...</h2>
+    <button class="btn" id="bloomBtn">Haz click</button>
+  </div>
 
-  <button onclick="irAPagina1()">Haz clic aquí</button>
+  <div class="garden" id="garden" aria-hidden="true"></div>
+
+  <!-- mensaje (hidden por css) -->
+  <div class="message" id="message" aria-hidden="true">Te Amo, Aisha ❤️</div>
 
   <script>
-    function irAPagina1(){
-      window.location.href="Pagina2.html";
-    }
-  </script>
+    const btn = document.getElementById('bloomBtn');
+    const banner = document.getElementById('banner');
+    const garden = document.getElementById('garden');
+    const message = document.getElementById('message');
 
+    // genera un SVG de flor tipo girasol con tallo y hojas
+    function sunflowerSVG(size = 1, hueShift = 0){
+      return `
+        <svg class="flower-svg" viewBox="0 0 200 320" width="${120 * size}" height="${192 * size}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <!-- tallo -->
+          <rect x="98" y="130" width="4" height="150" rx="2" fill="#2e7d32" />
+
+          <!-- hojas -->
+          <path class="leaf" d="M100 180 C70 170, 60 200, 100 205 C120 209, 140 195, 100 180" fill="#2e7d32"/>
+          <path class="leaf" d="M100 210 C130 200, 150 230, 100 235 C80 239, 60 225, 100 210" fill="#2e7d32"/>
+
+          <!-- pétalos (12) -->
+          <g transform="translate(100,90)">
+            ${Array.from({length:12}).map((_,i)=>{
+              const angle = (i*30);
+              return `<ellipse class="petal" cx="0" cy="-48" rx="20" ry="44" transform="rotate(${angle})" fill="hsl(${55 + hueShift} 100% 60%)" stroke="hsl(${40 + hueShift} 90% 45%)" stroke-width="2" />`
+            }).join('')}
+          </g>
+
+          <!-- centro -->
+          <circle class="center" cx="100" cy="90" r="26" fill="#7b4f2a" />
+          <circle cx="100" cy="90" r="12" fill="#a4713b" opacity="0.9" />
+        </svg>
+      `;
+    }
+
+    // crea una flor en x,y con tamaño y delay; se usa una envoltura para animación
+    function createFlower(x, y, size, delay, rotation, hue){
+      const wrap = document.createElement('div');
+      wrap.className = 'flower-wrap';
+      wrap.style.left = `${x}px`;
+      wrap.style.top = `${y}px`;
+      wrap.style.setProperty('--s', size);
+      wrap.style.transform = `translate(-50%,0) scale(.6) rotate(${rotation}deg)`;
+
+      wrap.innerHTML = sunflowerSVG(size, hue);
+      garden.appendChild(wrap);
+
+      requestAnimationFrame(()=>{
+        setTimeout(()=>{
+          wrap.classList.add('bloom');
+          wrap.style.transform = `translate(-50%,0) scale(${size})`;
+          const svg = wrap.querySelector('.flower-svg');
+          if(svg) svg.style.transform = `rotate(${rotation}deg)`;
+        }, delay*1000);
+      });
+
+      const svg = wrap.querySelector('.flower-svg');
+      if(svg){
+        const period = 3 + Math.random()*3;
+        svg.style.animationDuration = period + 's';
+        svg.style.animationDelay = (delay * 0.6) + 's';
+      }
+    }
+
+    function plantField(){
+      const area = window.innerWidth * window.innerHeight;
+      let count = Math.round(area / (100*100));
+      count = Math.max(18, Math.min(100, count));
+
+      for(let i=0;i<count;i++){
+        const padding = 40;
+        const x = Math.random() * (window.innerWidth - padding*2) + padding;
+        const y = Math.random() * (window.innerHeight - 80 - padding) + padding + 40;
+        const size = 0.7 + Math.random()*1.6;
+        const delay = Math.random()*1.6;
+        const rotation = (Math.random()*24 - 12);
+        const hue = Math.random()*8 - 4;
+        createFlower(x, y, size, delay, rotation, hue);
+      }
+
+      garden.classList.add('show');
+    }
+
+    function showMessage(){
+      if(!message) return;
+      message.classList.add('show');
+      setTimeout(()=> message.classList.add('pulse'), 900);
+    }
+
+    btn.addEventListener('click', ()=>{
+      // animar salida del banner
+      banner.style.transition = 'transform 600ms cubic-bezier(.2,.9,.3,1), opacity 600ms ease';
+      banner.style.transform = 'translate(-50%,-60%) scale(.96)';
+      banner.style.opacity = '0';
+      setTimeout(()=> banner.remove(), 650);
+
+      // plantar flores y mostrar mensaje después
+      setTimeout(plantField, 250);
+      // mostrar mensaje un poco después de que las flores aparezcan
+      setTimeout(showMessage, 250 + 1600);
+    });
+
+    // Exponer plantField por si quieres replantar manualmente desde consola
+    window.plantField = plantField;
+
+  </script>
 </body>
 </html>
 
