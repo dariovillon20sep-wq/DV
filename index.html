@@ -11,7 +11,6 @@
     }
     html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));font-family:Inter, system-ui, Arial, sans-serif;overflow:hidden}
 
-    /* BANNER (botón) */
     .card{
       position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;background:rgba(255,255,255,0.95);backdrop-filter:blur(6px);padding:28px;border-radius:18px;box-shadow:0 18px 40px rgba(10,10,20,0.12);text-align:center
     }
@@ -22,16 +21,13 @@
     }
     .btn:active{transform:translateY(2px)}
 
-    /* contenedor global de flores */
     .garden{position:fixed;inset:0;overflow:hidden;z-index:5}
 
-    /* cada flor (envoltura absoluta) */
     .flower-wrap{
       position:absolute;left:0;top:0;transform:translate(-50%,0) scale(.6);opacity:0;will-change:transform,opacity;transition:transform 800ms cubic-bezier(.2,.9,.3,1),opacity 800ms ease;
     }
     .flower-wrap.bloom{opacity:1;transform:translate(-50%,0) scale(var(--s,1));}
 
-    /* el SVG tiene la animación de balanceo (sway) para parecer vivo */
     .flower-svg{display:block;transform-origin:50% 95%;will-change:transform;animation: sway 4s ease-in-out infinite;}
 
     @keyframes sway{
@@ -39,13 +35,10 @@
       50%{transform: rotate(4deg)}
       100%{transform: rotate(-4deg)}
     }
-
-    /* variante de sombra para que no se vea plano */
     .flower-svg .petal{filter:drop-shadow(0 6px 8px rgba(0,0,0,0.09));}
     .flower-svg .center{filter:drop-shadow(0 6px 12px rgba(0,0,0,0.10));}
     .flower-svg .leaf{opacity:0.95}
 
-    /* mensaje final (oculto por defecto) */
     .message{
       position:fixed;
       left:50%;
@@ -70,7 +63,6 @@
     .message.pulse{animation: pulse 1.2s ease-in-out infinite}
     @keyframes pulse{0%{transform:translate(-50%,0) scale(1)}50%{transform:translate(-50%,0) scale(1.035)}100%{transform:translate(-50%,0) scale(1)}}
 
-    /* responsive */
     @media (max-width:520px){.message{top:34%;font-size:clamp(18px,6vw,30px);padding:12px 16px}}
 
   </style>
@@ -84,7 +76,6 @@
 
   <div class="garden" id="garden" aria-hidden="true"></div>
 
-  <!-- mensaje (hidden por css) -->
   <div class="message" id="message" aria-hidden="true">Te Amo, Aisha ❤️</div>
 
   <script>
@@ -93,7 +84,6 @@
     const garden = document.getElementById('garden');
     const message = document.getElementById('message');
 
-    // genera un SVG de flor tipo girasol con tallo y hojas
     function sunflowerSVG(size = 1, hueShift = 0){
       return `
         <svg class="flower-svg" viewBox="0 0 200 320" width="${120 * size}" height="${192 * size}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -119,7 +109,6 @@
       `;
     }
 
-    // crea una flor en x,y con tamaño y delay; se usa una envoltura para animación
     function createFlower(x, y, size, delay, rotation, hue){
       const wrap = document.createElement('div');
       wrap.className = 'flower-wrap';
@@ -174,19 +163,15 @@
     }
 
     btn.addEventListener('click', ()=>{
-      // animar salida del banner
       banner.style.transition = 'transform 600ms cubic-bezier(.2,.9,.3,1), opacity 600ms ease';
       banner.style.transform = 'translate(-50%,-60%) scale(.96)';
       banner.style.opacity = '0';
       setTimeout(()=> banner.remove(), 650);
 
-      // plantar flores y mostrar mensaje después
       setTimeout(plantField, 250);
-      // mostrar mensaje un poco después de que las flores aparezcan
       setTimeout(showMessage, 250 + 1600);
     });
 
-    // Exponer plantField por si quieres replantar manualmente desde consola
     window.plantField = plantField;
 
   </script>
